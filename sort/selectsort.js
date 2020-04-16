@@ -1,19 +1,20 @@
 let data = [9, 341, 43, 6, 7, 98, 4, 8, 9, 6578, 46, 4, 34, 345, 45];
 
 function selectsort(array) {
-    let minIndex, current;
+    let minIndex;
     for (let i = 0; i < array.length; i++) {
-        minIndex = i;
-        for (let j = i + 1; j < array.length; j++) {
+        minIndex = i; 
+        for (let j = i; j < array.length; j++) {
             if(array[j] < array[minIndex]){
-                minIndex = j;
+                minIndex = j
             }
         }
-        current = array[i];
+        let temp = array[i];
         array[i] = array[minIndex];
-        array[minIndex] = current;
+        array[minIndex] = temp;
     }
     return array;
 }
 
+console.log(data);
 console.log(selectsort(data));
