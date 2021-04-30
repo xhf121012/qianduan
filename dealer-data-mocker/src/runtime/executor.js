@@ -23,9 +23,14 @@ function renderMocker(propList, value, ctx) {
     propList.forEach(prop => {
         let mocker = prop.value.actual;
         let mockerInstance = new mocker.mocker(mocker.parameter, mocker.conditionFn);
-        let result = mockerInstance.invoke(ctx, prop.value.actual, value);
+        let result = mockerInstance.invoke(ctx);
         if (result) {
-            extend(result, value);
+            if (prop.name) {
+                value.name = result;
+            } else {
+                ctx["$" + mocker.name] = result;
+                extend(result, value);
+            }
         }
     });
     return value;

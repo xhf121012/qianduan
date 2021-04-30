@@ -8,6 +8,7 @@ let renderValue = require("./src/runtime/executor.js");
 //     consumer: "zhangsan",
 //     userName2: @array("zhansan"),
 //     userName3: "[20,21]",
+//     sid: $series.seriesId,
 //     ag: 0.36,
 //     specList: @array({
 //         name: "海峰",
@@ -19,6 +20,7 @@ let renderValue = require("./src/runtime/executor.js");
 
 let jsoin = `{
     @series[seriesId >= 2544, seriesName === '标致208'], 
+    @dealer[cityId === 210100],
     consumer: "zhangsan",
     minId: 5000
 }`
