@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.0-beta.14/chart.min.js"
+        integrity="sha512-YjbW9p0U8513hWAh3SE2r2OIZdZKpdeNcyrePeHDSzSOlYrNcUna6lk3+nIFNNHJikikJaNG6Sl4ij2MiLl9pQ=="
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <canvas id="myCanvas"></canvas>
+    <script>
+        const dataList = [];
+        const dataList1 = [];
+        const dataLabel = [];
+
+        for (let i = 1; i <= 120; i++) {
+            dataList.push(Math.random() * i);
+            dataList1.push(Math.random() * i);
+            dataLabel.push(i.toString());
+        }
+
+
+        new Chart(document.getElementById("myCanvas"), {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: "营销活动",
+                    data: dataList,
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    borderColor: "#e7d50c"
+                }, {
+                    label: "商业资源",
+                    data: dataList1,
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    borderColor: "#0c9ce7"
+                }
+                ],
+                labels: dataLabel
+            },
+
+            options: {
+                interaction: {
+                    intersect: false,
+                    mode: "x"
+                },
+                plugins: {
+                    tooltip: {
+
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

@@ -37,11 +37,12 @@ function visit1(root) {
     while(root || stack.length > 0){
         while(root){
             stack.push(root);
+            console.log(root.data);
+
             root = root.left;
         }
         if(stack.length > 0){
             root = stack.pop();
-            console.log(root.data);
             root = root.right;
         }
     }

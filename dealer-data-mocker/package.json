@@ -1,0 +1,14 @@
+{
+  "name": "dealer-data-mocker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dev": "nodemon ./main.js"
+  },
+  "author": "xiehaifeng@autohome.com.cn",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}

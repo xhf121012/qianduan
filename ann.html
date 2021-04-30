@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        .ann {
+            transition: opacity 6s cubic-bezier(0, 0, 0, 1), width 6s cubic-bezier(0, 0, 0, 1);
+            width: 0;
+            height: 100px;
+            margin: 100px auto;
+            background-size: 100%;
+            opacity: 0.3;
+            background-repeat: no-repeat;
+        }
+
+        .ann.three {
+            background-image: url(https://s.autoimg.cn/dealer/m/topics/2020818redpackrain/img/animate/three-img.png );
+            opacity: 1;
+            width: 100px;
+        }
+
+        .ann.two {
+            background-image: url(https://s.autoimg.cn/dealer/m/topics/2020818redpackrain/img/animate/two-img.png );
+            opacity: 1;
+            width: 100px;
+        }
+
+        .ann.one {
+            background-image: url(https://s.autoimg.cn/dealer/m/topics/2020818redpackrain/img/animate/one-img.png );
+            opacity: 1;
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <!-- 
+    https://s.autoimg.cn/dealer/m/topics/2020818redpackrain/img/animate/three-img.png 
+    https://s.autoimg.cn/dealer/m/topics/2020818redpackrain/img/animate/two-img.png
+    https://s.autoimg.cn/dealer/m/topics/2020818redpackrain/img/animate/one-img.png
+-->
+        <div class="ann" id="container">
+
+        </div>
+    </div>
+    <script>
+        document.getElementById("container").classList.add("three");
+        setInterval(() => {
+            let classList = document.getElementById("container").classList;
+            if (classList.contains("three")) {
+                classList.remove("three");
+                setTimeout(() => {
+                    classList.add("two");
+                }, 400);
+                return;
+            }
+
+            if (classList.contains("two")) {
+                classList.remove("two");
+                setTimeout(() => {
+                    classList.add("one");
+                }, 400);
+                return;
+            }
+
+            if (classList.contains("one")) {
+                classList.remove("one");
+                setTimeout(() => {
+                    classList.add("three");
+                }, 400);
+                return;
+            }
+        }, 2000);
+    </script>
+</body>
+
+</html>
