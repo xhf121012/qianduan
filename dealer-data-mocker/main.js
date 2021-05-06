@@ -17,19 +17,34 @@ let renderValue = require("./src/runtime/executor.js");
 //     specList2: @array(@series[seriesId === $series.seriesId, 1 == 1](7788997), size = 5-10),
 //     userlist: @array(100)
 // }`
+/*
 
-let jsoin = `{
-    @series[seriesId < $this.minId, seriesName === '标致208'], 
+*/
+let jsoin = `{ 
+    minId: @int(4500-4600),
     @dealer[cityId === 110100](6776, prom = jeee),
+    @series[seriesId === $this.minId], 
     consumer: "[zhangsan]",
-    minId: 5000
+    specList2: @array( @series[seriesId === $series.seriesId, 1 == 1](7788997), size = 5-10),
+    specList: @array  (  {
+        name: "海峰",
+        age: 100
+    }, size = 5-10 ),
+   empty: @array({}),
+   uName: {
+       name: 1,
+       value: @int(1 - 100),
+       complex: {
+           value: 11,
+           banme: "ee"
+       }
+   }
+
 }`
 
 let propList = compileToAst(jsoin);
 resolveValues(propList);
-let value = renderValue(propList, {
-    
-});
+let value = renderValue(propList);
 console.log(JSON.stringify(value, null, 4));
 
 

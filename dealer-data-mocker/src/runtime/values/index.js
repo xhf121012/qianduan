@@ -1,8 +1,8 @@
 let series = require("./busi/series.js");
 let dealer = require("./busi/dealer.js");
 let array = require("./base/array.js");
-let random = require("./base/random.js");
+let int = require("./base/int.js");
 
 module.exports = {
-    series, dealer, array, random
+    series, dealer, array, int
 };

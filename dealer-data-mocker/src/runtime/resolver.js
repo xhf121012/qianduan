@@ -10,20 +10,33 @@ function resolveValues(propList) {
 
 function resolveValue(prop) {
     let val = Object.create(null);
-    if (isNumber(prop.value)) {
+    if (isArray(prop.value)) {
+        val.type = valueTypes.MOCKER_OBJECT;
+        val.actual = resolveValues(prop.value);
+        
+    } else if (isNumber(prop.value)) {
         val.type = valueTypes.NUMBER;
-        val.actual = constantValue(prop.value)
+        val.actual = constantValue(prop.value);
+        val.order = 0;
+
     } else if (isString(prop.value)) {
         val.type = valueTypes.STRING;
-        val.actual = constantValue(prop.value)
+        val.actual = constantValue(prop.value);
+        val.order = 0;
+
     } else if (isMocker(prop.value)) {
         val.type = valueTypes.MOCKER;
         val.actual = findMocker(prop);
+
     } else {
         throw new Error("unknown value type: " + prop.value);
     }
     prop.value = val;
     return prop;
+}
+
+function analyseDependency() {
+
 }
 
 function findMocker(prop) {
