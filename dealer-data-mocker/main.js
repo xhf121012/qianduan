@@ -19,15 +19,17 @@ let renderValue = require("./src/runtime/executor.js");
 // }`
 
 let jsoin = `{
-    @series[seriesId >= 2544, seriesName === '标致208'], 
-    @dealer[cityId === 210100],
-    consumer: "zhangsan",
+    @series[seriesId < $this.minId, seriesName === '标致208'], 
+    @dealer[cityId === 110100](6776, prom = jeee),
+    consumer: "[zhangsan]",
     minId: 5000
 }`
 
 let propList = compileToAst(jsoin);
 resolveValues(propList);
-let value = renderValue(propList);
+let value = renderValue(propList, {
+    
+});
 console.log(JSON.stringify(value, null, 4));
 
 

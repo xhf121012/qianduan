@@ -36,16 +36,10 @@ function parseObj(template) {
             content = "";
             remain = moveNext(remain);
 
-        } else if (currentChar === '"') {
-            let result = matchValueAndMove(remain, /("[\s\S]*?")/);
-            prop.value = result.value;
-            remain = result.remain;
-            content = "";
-
-        } else if (currentChar === "'") {
-            let result = matchValueAndMove(remain, /('[\s\S]*?')/);
-            prop.value = result.value;
-            remain = result.remain;
+        } else if (currentChar === '"' || currentChar === "'") {
+            let result = matchBrace(remain, currentChar, currentChar);
+            prop.value = result;
+            remain = remain.replace(result, "");
             content = "";
 
         } else if (currentChar === "[") {
@@ -56,7 +50,7 @@ function parseObj(template) {
             content = "";
 
         } else if (currentChar === "(") {
-            let regex = /^\([\s]*?(?:\{)/;
+            let regex = /^\([\s]*?(?:\{)/; // 参数是 ({ 的形式
             if (regex.test(remain)) {
                 remain = remain.replace(regex, "{");
                 let braceResult = matchBrace(remain, "{", "}");
@@ -74,26 +68,8 @@ function parseObj(template) {
                 remain = result.remain;
             } else {
                 let braceResult = matchBrace(remain, "(", ")");
-
                 remain = remain.replace(braceResult, "");
                 prop.parameter = braceResult;
-
-                // let result = matchValueAndMove(remain, /([\s\S]*?\))/);
-                // let others;
-                // // 空参数
-                // if (!/^[\s]*\)$/.test(result.value)) {
-                //     others = "(" + result.value.replace(/^[\s\S]*,/, "");
-                // }
-                // prop.parameter = {
-                //     complex: braceResult,
-                //     others: others
-                // };
-                // remain = result.remain;
-
-
-                // let result = matchValueAndMove(remain, /(\([\s\S]*?\))/);
-                // prop.parameter = result.value;
-                // remain = result.remain;
             }
         } else {
             content += currentChar;

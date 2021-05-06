@@ -14,14 +14,20 @@ module.exports.matchValueAndMove = function (template, regex, noTrim) {
     };
 };
 
+//匹配括号，引号等
 module.exports.matchBrace = function (template, start, end) {
     let braceCount = 0;
     let content = "";
+    let startEqualEnd = start === end;
 
     while (template) {
         let currentChar = template.substr(0, 1);
         if (currentChar === start) {
             braceCount += 1;
+            if (startEqualEnd &&  braceCount % 2 === 0) {
+                content += currentChar;
+                return content;
+            }
         } else if (currentChar === end) {
             braceCount -= 1;
             if (braceCount === 0) {
