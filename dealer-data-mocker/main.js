@@ -52,7 +52,8 @@ let jsoin = `{
    arr1: @array({
        @dealer[cityId === $this.minId],
        a: 1
-   }, size = 1-2)
+   }, size = 1-2),
+   arr2: @array(@int)
 }`
 
 let propList = compileToAst(jsoin);
