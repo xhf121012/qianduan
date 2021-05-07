@@ -57,7 +57,7 @@ module.exports.renderArrayItem = function (prop, ctx, multi) {
     let mocker = prop.value.actual;
     let mockerInstance = new mocker.mocker(mocker.parameter, mocker.conditionFn);
     if (multi && mocker.mocker.__supportMulti) {
-        mockerInstance.itemCount = multi;
+        mockerInstance.__multi = multi;
         return mockerInstance.invoke(ctx);
     } else {
         return repeat(multi).map(i => mockerInstance.invoke(ctx));

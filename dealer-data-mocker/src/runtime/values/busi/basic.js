@@ -5,7 +5,7 @@ let { randomItem } = require("../../valueUtil.js");
 module.exports = function (parameter, conditionFn) {
     this.parameter = parameter;
     this.conditionFn = conditionFn || YES_FN;
-    this.itemCount = null;
+    this.__multi = null;
 
     this.invoke = function (ctx) {
         let filteredList = this.dataList.filter(item => {
@@ -14,7 +14,7 @@ module.exports = function (parameter, conditionFn) {
             return this.conditionFn.call(null, newItem);
         });
         if (filteredList && filteredList.length) {
-            return randomItem(filteredList, this.itemCount);
+            return randomItem(filteredList, this.__multi);
         }
         return undefined;
     }
