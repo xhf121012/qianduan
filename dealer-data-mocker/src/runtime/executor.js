@@ -1,48 +1,52 @@
 let valueTypes = require("./values/valueTypes.js");
 let { extend } = require("../util/util.js");
 
-function renderValue(propList, ctx) {
+function renderValue(propList, rootCtx) {
     let value = Object.create(null);
-    let context = ctx || Object.create(null);
-    context.$this = value; // 上下文中，自己的引用
-    let constantPropList = propList.filter(prop => prop.value.type === valueTypes.NUMBER || prop.value.type === valueTypes.STRING);
-    renderConstant(constantPropList, value, context);
-    let mockerPropList = propList.filter(prop => prop.value.type === valueTypes.MOCKER);
-    renderMocker(mockerPropList, value, context);
+    let context;
+    if (rootCtx) {
+        context = rootCtx;
+    } else {
+        context = Object.create(null);
+        context.$this = value; // 上下文中，自己的引用
+        context.$query = Object.create(null);
+    }
 
-    let objectPropList = propList.filter(prop => prop.value.type === valueTypes.MOCKER_OBJECT);
-    renderObject(objectPropList, value, context);
-    return value;
-}
-
-function renderConstant(propList, value) {
     propList.forEach(prop => {
-        value[prop.name] = prop.value.actual;
-    });
-    return value;
-}
-
-function renderMocker(propList, value, ctx) {
-    propList.forEach(prop => {
-        let mocker = prop.value.actual;
-        let mockerInstance = new mocker.mocker(mocker.parameter, mocker.conditionFn);
-        let result = mockerInstance.invoke(ctx);
-        if (result !== undefined) {
-            if (prop.name) {
-                value[prop.name] = result;
-            } else {
-                ctx["$" + mocker.name] = result;
-                extend(result, value);
-            }
+        if (prop.value.type === valueTypes.NUMBER || prop.value.type === valueTypes.STRING) {
+            renderConstant(prop, value, context);
+        } else if (prop.value.type === valueTypes.MOCKER) {
+            renderMocker(prop, value, context);
+        } else if (prop.value.type === valueTypes.MOCKER_OBJECT) {
+            renderObject(prop, value, context);
+        } else {
+            throw new Error("unknow valueType: " + prop.value.type);
         }
     });
+
     return value;
 }
 
-function renderObject(propList, value, ctx) {
-    propList.forEach(prop => {
-        value[prop.name] = renderValue(prop.value.actual, ctx);
-    });
+function renderConstant(prop, value) {
+    value[prop.name] = prop.value.actual;
+    return value;
+}
+
+function renderMocker(prop, value, ctx) {
+    let mocker = prop.value.actual;
+    let mockerInstance = new mocker.mocker(mocker.parameter, mocker.conditionFn);
+    let result = mockerInstance.invoke(ctx) || Object.create(null);
+    if (prop.name) {
+        value[prop.name] = result;
+    } else {
+        ctx["$" + mocker.name] = result;
+        extend(result, value);
+    }
+    return value;
+}
+
+function renderObject(prop, value, ctx) {
+    value[prop.name] = renderValue(prop.value.actual, ctx);
     return value;
 }
 

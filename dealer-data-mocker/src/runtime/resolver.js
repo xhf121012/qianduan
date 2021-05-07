@@ -5,10 +5,6 @@ let { isObject, isArray, trimStart, matchValue } = require("../util/util.js");
 
 function resolveValues(propList) {
     propList.forEach(resolveValue);
-    propList.forEach(prop => {
-        let dependency = analyseDependency(prop);
-        prop.dependency = dependency.length ? dependency : null;
-    });
     return propList;
 }
 
@@ -37,7 +33,7 @@ function resolveValue(prop) {
     return prop;
 }
 
-function analyseDependency(prop) {
+function analyseDependencyInner(prop) {
     let dependency = [];
     if (prop.conditions) { //analyse condition
         prop.conditions.forEach(cond => {
@@ -49,19 +45,19 @@ function analyseDependency(prop) {
     if (prop.parameters && isObject(prop.parameters.default)) {
         let parameterObject = prop.parameters.default;
         if (parameterObject.type === valueTypes.MOCKER && parameterObject.actual.conditions) {
-
-            Array.prototype.push.apply(dependency, analyseDependency(parameterObject.actual));
+            Array.prototype.push.apply(dependency, analyseDependencyInner(parameterObject.actual));
         }
     }
 
     if (prop.value && prop.value.type === valueTypes.MOCKER_OBJECT) {
         if (isArray(prop.value.actual)) {
             prop.value.actual.forEach(child => {
-                Array.prototype.push.apply(dependency, analyseDependency(child));
+                Array.prototype.push.apply(dependency, analyseDependencyInner(child));
             })
         }
     }
     delete prop.parameters;
+    delete prop.conditions;
     return dependency;
 }
 
@@ -115,6 +111,8 @@ function findDependency(condition) {
         return matchValue(dep, /(^\$[a-zA-z1-9]+)\./);
     }
 }
+
+
 module.exports.resolveValues = resolveValues;
 
 module.exports.sortProperties = function (propList) {
@@ -123,16 +121,17 @@ module.exports.sortProperties = function (propList) {
     let getPropName = prop => prop.name || ("$" + prop.value.actual.name);
     while (propList.length) {
         propList.forEach(prop => {
-            if (!prop.dependency) {
+            if (!prop.dependency) { //没有依赖，直接加入
                 orderedProperties.push(getPropName(prop));
                 resultList.push(prop);
             }
-            if (prop.dependency && !prop.dependency.some(dep => orderedProperties.indexOf(dep) === -1)) {
+            if (prop.dependency && !prop.dependency.some(dep => orderedProperties.indexOf(dep) === -1)) { //依赖都已经渲染了，加入
                 orderedProperties.push(getPropName(prop));
                 resultList.push(prop);
             }
         });
         let newPropList = propList.filter(prop => orderedProperties.indexOf(getPropName(prop)) === -1);
+
         if (newPropList.length === propList.length) {
             throw new Error("exists cyclic dependency property");
         }
@@ -140,4 +139,11 @@ module.exports.sortProperties = function (propList) {
     }
 
     return resultList;
+}
+
+module.exports.analyseDependency = function (propList) {
+    propList.forEach(prop => {
+        let dependency = analyseDependencyInner(prop);
+        prop.dependency = dependency.length ? dependency : null;
+    });
 }

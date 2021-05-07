@@ -1,5 +1,5 @@
 let compileToAst = require("./src/compile/compiler.js");
-let { resolveValues, sortProperties } = require("./src/runtime/resolver.js");
+let { resolveValues, sortProperties, analyseDependency } = require("./src/runtime/resolver.js");
 let renderValue = require("./src/runtime/executor.js");
 
 
@@ -18,9 +18,6 @@ let renderValue = require("./src/runtime/executor.js");
 //     userlist: @array(100)
 // }`
 /*
-
-*/
-let jsoin = `{ 
  
     @dealer[dealerId === $this.minId, cityId === 110100, a === $query.userName](6776, prom = jeee),
     @series[seriesId === $this.consumer], 
@@ -40,11 +37,22 @@ let jsoin = `{
            banme: @dealer[dealerName === $series.seriesId, cityId === $this.minId]
        }
    }
-
+*/
+let jsoin = `{ 
+    @series[seriesId === $this.consumer], 
+    consumer: @int(4500-4700), 
+    minId: @int(120100-120100),
+    uName: {
+        complex: {
+            banme: @dealer[cityId === $this.minId],
+            series: @series[seriesId === $series.seriesId + 10]
+       }
+   }
 }`
 
 let propList = compileToAst(jsoin);
 resolveValues(propList);
+analyseDependency(propList);
 propList = sortProperties(propList);
 let value = renderValue(propList);
 console.log(JSON.stringify(value, null, 4));
