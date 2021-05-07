@@ -1,13 +1,13 @@
+let { parseRange, rangeRandom } = require("../../valueUtil.js");
+
 function integer(parameter = {}) {
     parameter.default = parameter.default || "0-999";
-
-    let minMax = parameter.default.split(/[\s]*\-[\s]*/);
-    this.min = parseInt(minMax[0]) || 0;
-    this.max = parseInt(minMax[1]) || 999;
+    let range = parseRange(parameter.default);
+    this.min = range.min;
+    this.max = range.max;
 
     this.invoke = function () {
-        let random = Math.random() * (this.max - this.min) + this.min;
-        return Math.floor(random);
+        return rangeRandom(this.min, this.max, true);
     }
 }
 

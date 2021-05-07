@@ -5,5 +5,6 @@ function dealer(parameter, conditionFn) {
     basic.call(this, parameter, conditionFn);
     this.dataList = dealerList;
 }
+dealer.__supportMulti = true;
 module.exports = dealer;
 

@@ -1,6 +1,6 @@
 let compileToAst = require("./src/compile/compiler.js");
 let { resolveValues, sortProperties, analyseDependency } = require("./src/runtime/resolver.js");
-let renderValue = require("./src/runtime/executor.js");
+let { render } = require("./src/runtime/executor.js");
 
 
 // let jsoin = `{
@@ -47,14 +47,19 @@ let jsoin = `{
             banme: @dealer[cityId === $this.minId],
             series: @series[seriesId === $series.seriesId + 10]
        }
-   }
+   },
+   arr: @array(@series[seriesId % 1000 === 0], size = 2-3),
+   arr1: @array({
+       @dealer[cityId === $this.minId],
+       a: 1
+   }, size = 1-2)
 }`
 
 let propList = compileToAst(jsoin);
 resolveValues(propList);
 analyseDependency(propList);
 propList = sortProperties(propList);
-let value = renderValue(propList);
+let value = render(propList);
 console.log(JSON.stringify(value, null, 4));
 
 

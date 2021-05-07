@@ -5,4 +5,5 @@ function series(parameter, conditionFn) {
     basic.call(this, parameter, conditionFn);
     this.dataList = seriesList;
 }
+series.__supportMulti = true;
 module.exports = series;

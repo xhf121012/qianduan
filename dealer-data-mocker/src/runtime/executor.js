@@ -1,7 +1,7 @@
 let valueTypes = require("./values/valueTypes.js");
 let { extend } = require("../util/util.js");
 
-function renderValue(propList, rootCtx) {
+function render(propList, rootCtx) {
     let value = Object.create(null);
     let context;
     if (rootCtx) {
@@ -46,9 +46,17 @@ function renderMocker(prop, value, ctx) {
 }
 
 function renderObject(prop, value, ctx) {
-    value[prop.name] = renderValue(prop.value.actual, ctx);
+    value[prop.name] = render(prop.value.actual, ctx);
     return value;
 }
 
 
-module.exports = renderValue;
+module.exports.render = render;
+module.exports.renderArrayItem = function (prop, ctx, repeat) {
+    let mocker = prop.value.actual;
+    let mockerInstance = new mocker.mocker(mocker.parameter, mocker.conditionFn);
+    if (repeat && mocker.mocker.__supportMulti) {
+        mockerInstance.itemCount = repeat;
+    }
+    return mockerInstance.invoke(ctx) || Object.create(null);
+};

@@ -26,9 +26,41 @@ module.exports.constantValue = function (value) {
     return value;
 }
 
-module.exports.randomItem = function (list) {
+module.exports.randomItem = function (list, itemCount) {
     if (!(list && list.length)) {
         return undefined;
     }
-    return list[Math.floor(Math.random() * list.length)];
+
+    if (!itemCount) {
+        return list[Math.floor(Math.random() * list.length)];
+    }
+
+    if (list.length <= itemCount) {
+        return list;
+    }
+
+    list = list.sort(item => Math.round(Math.random() * 10 - 5));
+    return list.slice(0, itemCount);
+}
+
+module.exports.parseRange = function (range, defaultStart = 0, defaultEnd = 999) {
+    let minMax = range.split(/[\s]*\-[\s]*/);
+    let min = parseInt(minMax[0]) || defaultStart;
+    let max = parseInt(minMax[1]) || defaultEnd;
+    return {
+        min, max
+    };
+}
+
+module.exports.rangeRandom = function (min, max, isInteger) {
+    let random = Math.random() * (max - min) + min;
+    return isInteger ? Math.floor(random) : random;
+}
+
+module.exports.repeat = function (count) {
+    let arr = [];
+    while (count--) {
+        arr.push(null);
+    }
+    return arr;
 }
