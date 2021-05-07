@@ -1,5 +1,5 @@
 let compileToAst = require("./src/compile/compiler.js");
-let resolveValues = require("./src/runtime/resolver.js");
+let { resolveValues, sortProperties } = require("./src/runtime/resolver.js");
 let renderValue = require("./src/runtime/executor.js");
 
 
@@ -21,10 +21,11 @@ let renderValue = require("./src/runtime/executor.js");
 
 */
 let jsoin = `{ 
+ 
+    @dealer[dealerId === $this.minId, cityId === 110100, a === $query.userName](6776, prom = jeee),
+    @series[seriesId === $this.consumer], 
+    consumer:  "[ zhtyutya567456 {etyert }ngsan  ]", 
     minId: @int(4500-4600),
-    @dealer[cityId === 110100](6776, prom = jeee),
-    @series[seriesId === $this.minId], 
-    consumer: "[zhangsan]",
     specList2: @array( @series[seriesId === $series.seriesId, 1 == 1](7788997), size = 5-10),
     specList: @array  (  {
         name: "海峰",
@@ -36,7 +37,7 @@ let jsoin = `{
        value: @int(1 - 100),
        complex: {
            value: 11,
-           banme: "ee"
+           banme: @dealer[dealerName === $series.seriesId, cityId === $this.minId]
        }
    }
 
@@ -44,6 +45,7 @@ let jsoin = `{
 
 let propList = compileToAst(jsoin);
 resolveValues(propList);
+propList = sortProperties(propList);
 let value = renderValue(propList);
 console.log(JSON.stringify(value, null, 4));
 

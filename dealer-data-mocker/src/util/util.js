@@ -33,6 +33,8 @@ function trimEnd(input, char) {
     return input;
 }
 
+module.exports.trimStart = trimStart;
+module.exports.trimEnd = trimEnd;
 module.exports.trimAll = function (input, start, end) {
     input = trimStart(input, start);
     input = trimEnd(input, end);

@@ -1,5 +1,5 @@
 let { moveNext, matchValue, matchValueAndMove, matchBrace, pushProperty } = require("./parserUtil.js");
-let { extend, isObject, trimAll } = require("../util/util.js");
+let { extend, trimAll } = require("../util/util.js");
 
 function compileToAst(template) {
     template = template.trim();
