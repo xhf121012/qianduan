@@ -1,4 +1,4 @@
-let { parseRange, rangeRandom } = require("../../valueUtil.js");
+let { parseRange, rangeRandom } = require("../../../util/valueUtil.js");
 
 function integer(parameter = {}) {
     parameter.default = parameter.default || "0-999";

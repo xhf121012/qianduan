@@ -19,24 +19,22 @@ let { render } = require("./src/runtime/executor.js");
 // }`
 /*
  
-    @dealer[dealerId === $this.minId, cityId === 110100, a === $query.userName](6776, prom = jeee),
     @series[seriesId === $this.consumer], 
-    consumer:  "[ zhtyutya567456 {etyert }ngsan  ]", 
-    minId: @int(4500-4600),
-    specList2: @array( @series[seriesId === $series.seriesId, 1 == 1](7788997), size = 5-10),
-    specList: @array  (  {
-        name: "海峰",
-        age: 100
-    }, size = 5-10 ),
-   empty: @array({}),
-   uName: {
-       name: 1,
-       value: @int(1 - 100),
-       complex: {
-           value: 11,
-           banme: @dealer[dealerName === $series.seriesId, cityId === $this.minId]
+    consumer: @int(4500-4700), 
+    minId: @int(120100-120100),
+    uName: {
+        complex: {
+            banme: @dealer[cityId === $this.minId],
+            series: @series[seriesId === $series.seriesId + 10]
        }
-   }
+   },
+   arr: @array(@series[seriesId % 1000 === 0], size = 2-3),
+   arr1: @array({
+       @dealer[cityId === $this.minId],
+       a: 1
+   }, size = 1-2),
+   arr2: @array(@int)
+list: @array(@dealer[cityId === $query.cityId], size = 5-10)
 */
 let jsoin = `{ 
     @series[seriesId === $this.consumer], 
@@ -55,12 +53,22 @@ let jsoin = `{
    }, size = 1-2),
    arr2: @array(@int)
 }`
-
+let query = Object.create(null);
+query.cityId = 110100;
 let propList = compileToAst(jsoin);
 resolveValues(propList);
 analyseDependency(propList);
 propList = sortProperties(propList);
-let value = render(propList);
+let value = render(propList, null, { query });
 console.log(JSON.stringify(value, null, 4));
 
+
+
+//TODO
+/*
+* 1、值类型为引用不支持（包括依赖解析）
+* 2、引用依赖中，字符串依赖需要处理
+* 3、基础mock类型丰富
+*
+*/
 

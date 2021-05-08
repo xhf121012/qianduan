@@ -1,4 +1,4 @@
-let { moveNext, matchValue, matchValueAndMove, matchBrace, pushProperty } = require("./parserUtil.js");
+let { moveNext, matchValue, matchValueAndMove, matchBrace, pushProperty } = require("../util/parserUtil.js");
 let { extend, trimAll } = require("../util/util.js");
 
 function compileToAst(template) {

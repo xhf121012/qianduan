@@ -1,4 +1,4 @@
-let { isMocker, isNumber, isString, constantValue } = require("./valueUtil.js");
+let { isMocker, isNumber, isString, constantValue } = require("../util/valueUtil.js");
 let mockers = require("./values/index.js");
 let valueTypes = require("./values/valueTypes.js");
 let { isObject, isArray, trimStart, matchValue } = require("../util/util.js");

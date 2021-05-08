@@ -1,6 +1,6 @@
 let { YES_FN } = require("../../../util/const.js");
 let { extend } = require("../../../util/util.js");
-let { randomItem } = require("../../valueUtil.js");
+let { randomItem } = require("../../../util/valueUtil.js");
 
 module.exports = function (parameter, conditionFn) {
     this.parameter = parameter;

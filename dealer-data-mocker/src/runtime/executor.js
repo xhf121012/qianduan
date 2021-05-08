@@ -1,8 +1,8 @@
 let valueTypes = require("./values/valueTypes.js");
 let { extend } = require("../util/util.js");
-let { repeat } = require("../runtime/valueUtil.js");
+let { repeat } = require("../util/valueUtil.js");
 
-function render(propList, rootCtx) {
+function render(propList, rootCtx, opts = {}) {
     let value = Object.create(null);
     let context;
     if (rootCtx) {
@@ -10,7 +10,7 @@ function render(propList, rootCtx) {
     } else {
         context = Object.create(null);
         context.$this = value; // 上下文中，自己的引用
-        context.$query = Object.create(null);
+        context.$query = opts.query || Object.create(null);
     }
 
     propList.forEach(prop => {
@@ -58,7 +58,7 @@ module.exports.renderArrayItem = function (prop, ctx, multi) {
     let mockerInstance = new mocker.mocker(mocker.parameter, mocker.conditionFn);
     if (multi && mocker.mocker.__supportMulti) {
         mockerInstance.__multi = multi;
-        return mockerInstance.invoke(ctx);
+        return mockerInstance.invoke(ctx) || [];
     } else {
         return repeat(multi).map(i => mockerInstance.invoke(ctx));
     }
