@@ -18,7 +18,6 @@ let { render } = require("./src/runtime/executor.js");
 //     userlist: @array(100)
 // }`
 /*
- 
     @series[seriesId === $this.consumer], 
     consumer: @int(4500-4700), 
     minId: @int(120100-120100),
@@ -26,37 +25,37 @@ let { render } = require("./src/runtime/executor.js");
         complex: {
             banme: @dealer[cityId === $this.minId],
             series: @series[seriesId === $series.seriesId + 10]
-       }
-   },
-   arr: @array(@series[seriesId % 1000 === 0], size = 2-3),
-   arr1: @array({
-       @dealer[cityId === $this.minId],
-       a: 1
-   }, size = 1-2),
-   arr2: @array(@int)
-list: @array(@dealer[cityId === $query.cityId], size = 5-10)
-*/
-
-let jsoin = `{
-    @dealer[cityId === "$this.cityId", dealerName === $this.cityId],
-    cityId: @series[seriesId === $dealer.dealerId + $series.sid, seriesName === $dealer.use],
-    user: @series[seriesId === $query],
-    @series[seriesId === $this.consumer], 
-    consumer: @int(4500-4700), 
-    minId: @int(120100-120100),
-    uName: {
-        complex: {
-            banme: @dealer[cityId === $this.minId],
-            series: @series[seriesId === $series.seriesId + 10]
-       }
+        }
     },
     arr: @array(@series[seriesId % 1000 === 0], size = 2-3),
     arr1: @array({
-       @dealer[cityId === $this.minId],
-       a: 1
+        @dealer[cityId === $this.minId],
+        a: 1
     }, size = 1-2),
     arr2: @array(@int),
     list: @array(@dealer[cityId === $query.cityId], size = 5-10)
+*/
+
+let jsoin = `{
+    consumerId1: "3333" + $dealer.dealerName,
+    @dealer[cityId === $query.cityId + 10000],
+    @series[seriesId === $this.consumer], 
+    consumer: "@int(4500-4700)", 
+    minId: @int(120100-120100),
+    uName: {
+        complex: {
+            banme: @dealer[cityId === $this.minId],
+            series: @series[seriesId === $series.seriesId + 10]
+        }
+    },
+    arr: @array(@series[seriesId % 1000 === 0], size = 2-3),
+    arr1: @array({
+        @dealer[cityId === $this.minId],
+        a: 1
+    }, size = 1-2),
+    arr2: @array(@int),
+    list: @array(@dealer[cityId === "$query.cityId"], size = 5-10)
+ 
 }`
 let query = Object.create(null);
 query.cityId = 110100;
@@ -71,9 +70,11 @@ console.log(JSON.stringify(value, null, 4));
 
 //TODO
 /*
-* 1、值类型为引用不支持（包括依赖解析）
-* 2、引用依赖中，字符串依赖需要处理
-* 3、基础mock类型丰富
+1、值类型为引用不支持（包括依赖解析）
+2、引用依赖中，字符串依赖需要处理
+3、基础mock类型丰富
+4、编译逻辑要优化（遇到逗号为新属性开始）
+5、
 *
 */
 

@@ -20,6 +20,8 @@ function render(propList, rootCtx, opts = {}) {
             renderMocker(prop, value, context);
         } else if (prop.value.type === valueTypes.MOCKER_OBJECT) {
             renderObject(prop, value, context);
+        } else if (prop.value.type === valueTypes.EXPRESSION) {
+            renderExpression(prop, value, context);
         } else {
             throw new Error("unknow valueType: " + prop.value.type);
         }
@@ -48,6 +50,11 @@ function renderMocker(prop, value, ctx) {
 
 function renderObject(prop, value, ctx) {
     value[prop.name] = render(prop.value.actual, ctx);
+    return value;
+}
+
+function renderExpression(prop, value, ctx) {
+    value[prop.name] = prop.value.actual.call(null, ctx);
     return value;
 }
 

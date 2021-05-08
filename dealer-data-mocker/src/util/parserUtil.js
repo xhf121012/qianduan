@@ -44,7 +44,7 @@ module.exports.matchBrace = function (template, start, end) {
 
 module.exports.pushProperty = function (list, prop, content) {
     prop.value = prop.value || content;
-    list.push(prop);
+    prop.value && list.push(prop);
 };
 
 module.exports.matchValue = matchValue;

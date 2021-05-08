@@ -28,7 +28,9 @@ function resolveValue(prop) {
         val.actual = findMocker(prop);
 
     } else {
-        throw new Error("unknown value type: " + prop.value);
+        val.type = valueTypes.EXPRESSION;
+        val.actual = new Function(`with(arguments[0]){ return ${prop.value}; }`);
+        val.expression = prop.value;
     }
     prop.value = val;
     return prop;
@@ -57,6 +59,11 @@ function analyseDependencyInner(prop) {
             })
         }
     }
+
+    if (prop.value && prop.value.type === valueTypes.EXPRESSION) {
+        Array.prototype.push.apply(dependency, findDependency(prop.value.expression));
+    }
+
     delete prop.parameters;
     delete prop.conditions;
     return dependency;
@@ -125,7 +132,6 @@ function findDependency(condition) {
             condition = moveNext(condition);
         }
     }
-
     return dependencySet;
 }
 

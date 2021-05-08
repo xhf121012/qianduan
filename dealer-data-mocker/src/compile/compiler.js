@@ -1,5 +1,9 @@
 let { moveNext, matchValue, matchValueAndMove, matchBrace, pushProperty } = require("../util/parserUtil.js");
 let { extend, trimAll, trimStart } = require("../util/util.js");
+const PROCESSING = {
+    KEY: 1,
+    VALUE: 2
+};
 
 function compileToAst(template) {
     template = template.trim();
@@ -26,19 +30,23 @@ function parseObj(template) {
     while (remain) {
         let currentChar = remain.substr(0, 1);
         if (currentChar === ",") {
+            if (content) { //保证 value 是expression时，不丢东西
+                prop.value += content;
+            }
+
             pushProperty(propList, prop, content);
-            content = "";
             prop = Object.create(null);
             remain = moveNext(remain);
+            content = "";
 
         } else if (currentChar === ':') {
             prop.name = content;
-            content = "";
             remain = moveNext(remain);
+            content = "";
 
         } else if (currentChar === '"' || currentChar === "'") {
             let result = matchBrace(remain, currentChar, currentChar);
-            prop.value = result;
+            prop.value = content + result; //保证 value 是expression时，不丢东西
             remain = trimStart(remain, result);
             content = "";
 
