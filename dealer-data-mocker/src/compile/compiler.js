@@ -1,5 +1,5 @@
 let { moveNext, matchValue, matchValueAndMove, matchBrace, pushProperty } = require("../util/parserUtil.js");
-let { extend, trimAll } = require("../util/util.js");
+let { extend, trimAll, trimStart } = require("../util/util.js");
 
 function compileToAst(template) {
     template = template.trim();
@@ -39,26 +39,26 @@ function parseObj(template) {
         } else if (currentChar === '"' || currentChar === "'") {
             let result = matchBrace(remain, currentChar, currentChar);
             prop.value = result;
-            remain = remain.replace(result, "");
+            remain = trimStart(remain, result);
             content = "";
 
         } else if (currentChar === "[") {
             let braceResult = matchBrace(remain, "[", "]");
-            remain = remain.replace(braceResult, "");
+            remain = trimStart(remain, braceResult);
             prop.condition = braceResult;
             prop.value = content;
             content = "";
 
         } else if (currentChar === "(") {
             let braceResult = matchBrace(remain, "(", ")");
-            remain = remain.replace(braceResult, "");
+            remain = trimStart(remain, braceResult);
             prop.parameter = braceResult;
             prop.value = prop.value || content;
             content = "";
 
         } else if (currentChar === "{") {
             let braceResult = matchBrace(remain, "{", "}");
-            remain = remain.replace(braceResult, "");
+            remain = trimStart(remain, braceResult);
             prop.value = compileToAst(braceResult);
             content = "";
 
@@ -114,7 +114,7 @@ function normalizeParameter(propList) {
             normalizeParameter(mockerParam);
             normalizeCondition(mockerParam);
             prop.parameters.default = mockerParam;
-            parameterString = parameterString.replace(defaultString, "");
+            parameterString = trimStart(parameterString, defaultString);
         }
 
         if (parameterString.indexOf("@") === 0) {

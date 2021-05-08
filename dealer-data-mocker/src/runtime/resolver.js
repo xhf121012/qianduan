@@ -2,6 +2,7 @@ let { isMocker, isNumber, isString, constantValue } = require("../util/valueUtil
 let mockers = require("./values/index.js");
 let valueTypes = require("./values/valueTypes.js");
 let { isObject, isArray, trimStart, matchValue } = require("../util/util.js");
+let { matchBrace, moveNext } = require("../util/parserUtil.js");
 
 function resolveValues(propList) {
     propList.forEach(resolveValue);
@@ -38,7 +39,7 @@ function analyseDependencyInner(prop) {
     if (prop.conditions) { //analyse condition
         prop.conditions.forEach(cond => {
             let result = findDependency(cond);
-            result && dependency.push(result);
+            result.length && Array.prototype.push.apply(dependency, result);
         });
     }
 
@@ -96,20 +97,36 @@ function resolveDefaultParameterValue(parameters) { //解析参数，目前只�
 }
 
 function findDependency(condition) {
-    let matchResult = condition.match(/(\$[a-zA-z1-9]+\.*[a-zA-z1-9]+)/);
-    if (matchResult && matchResult.length) {
-        let dep = matchResult[1];
+    let dependencySet = [];
 
-        if (dep.indexOf("$query.") === 0) {
-            return "$query";
+    while (condition) {
+        let currentChar = condition.substr(0, 1);
+        if (currentChar === '"' || currentChar === "'") { //去除阔含的影响
+            let braceResult = matchBrace(condition, currentChar, currentChar);
+            condition = trimStart(condition, braceResult);
+        } else if (currentChar === "$") {
+            let matchResult = condition.match(/^(\$[a-zA-z1-9]+\.*[a-zA-z1-9]+)/);
+            if (matchResult && matchResult.length) {
+                let dep = matchResult[1];
+                if (dep.indexOf("$query.") === 0) {
+                    dependencySet.push("$query");
+                } else if (dep.indexOf("$this.") === 0) {
+                    dependencySet.push(trimStart(dep, "$this."));
+                } else {
+                    let wholeDep = matchValue(dep, /(^\$[a-zA-z1-9]+)\.*/);
+                    if (wholeDep === "$this") {
+                        throw new Error("'$this' can not be depended")
+                    }
+                    dependencySet.push(wholeDep);
+                }
+                condition = trimStart(condition, dep);
+            }
+        } else {
+            condition = moveNext(condition);
         }
-
-        if (dep.indexOf("$this.") === 0) {
-            return trimStart(dep, "$this.")
-        }
-
-        return matchValue(dep, /(^\$[a-zA-z1-9]+)\./);
     }
+
+    return dependencySet;
 }
 
 
@@ -133,7 +150,7 @@ module.exports.sortProperties = function (propList) {
         let newPropList = propList.filter(prop => orderedProperties.indexOf(getPropName(prop)) === -1);
 
         if (newPropList.length === propList.length) {
-            throw new Error("exists cyclic dependency property");
+            throw new Error(`exists cyclic dependency property: "${newPropList[0].dependency}"`);
         }
         propList = newPropList;
     }
@@ -144,6 +161,6 @@ module.exports.sortProperties = function (propList) {
 module.exports.analyseDependency = function (propList) {
     propList.forEach(prop => {
         let dependency = analyseDependencyInner(prop);
-        prop.dependency = dependency.length ? dependency : null;
+        prop.dependency = dependency.length ? [...new Set(dependency)] : null;
     });
 }

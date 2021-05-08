@@ -36,7 +36,11 @@ let { render } = require("./src/runtime/executor.js");
    arr2: @array(@int)
 list: @array(@dealer[cityId === $query.cityId], size = 5-10)
 */
-let jsoin = `{ 
+
+let jsoin = `{
+    @dealer[cityId === "$this.cityId", dealerName === $this.cityId],
+    cityId: @series[seriesId === $dealer.dealerId + $series.sid, seriesName === $dealer.use],
+    user: @series[seriesId === $query],
     @series[seriesId === $this.consumer], 
     consumer: @int(4500-4700), 
     minId: @int(120100-120100),
@@ -45,13 +49,14 @@ let jsoin = `{
             banme: @dealer[cityId === $this.minId],
             series: @series[seriesId === $series.seriesId + 10]
        }
-   },
-   arr: @array(@series[seriesId % 1000 === 0], size = 2-3),
-   arr1: @array({
+    },
+    arr: @array(@series[seriesId % 1000 === 0], size = 2-3),
+    arr1: @array({
        @dealer[cityId === $this.minId],
        a: 1
-   }, size = 1-2),
-   arr2: @array(@int)
+    }, size = 1-2),
+    arr2: @array(@int),
+    list: @array(@dealer[cityId === $query.cityId], size = 5-10)
 }`
 let query = Object.create(null);
 query.cityId = 110100;
