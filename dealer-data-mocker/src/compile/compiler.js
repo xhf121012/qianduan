@@ -30,10 +30,6 @@ function parseObj(template) {
     while (remain) {
         let currentChar = remain.substr(0, 1);
         if (currentChar === ",") {
-            if (content) { //保证 value 是expression时，不丢东西
-                prop.value += content;
-            }
-
             pushProperty(propList, prop, content);
             prop = Object.create(null);
             remain = moveNext(remain);
@@ -46,7 +42,7 @@ function parseObj(template) {
 
         } else if (currentChar === '"' || currentChar === "'") {
             let result = matchBrace(remain, currentChar, currentChar);
-            prop.value = content + result; //保证 value 是expression时，不丢东西
+            prop.value = content + result;
             remain = trimStart(remain, result);
             content = "";
 

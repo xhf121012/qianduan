@@ -45,8 +45,17 @@ module.exports.randomItem = function (list, itemCount) {
 
 module.exports.parseRange = function (range, defaultStart = 0, defaultEnd = 999) {
     let minMax = range.split(/[\s]*\-[\s]*/);
-    let min = parseInt(minMax[0]) || defaultStart;
-    let max = parseInt(minMax[1]) || defaultEnd;
+    let min, max;
+    if (minMax.length === 2) {
+        min = parseInt(minMax[0]);
+        max = parseInt(minMax[1]);
+    } else if (minMax.length === 1) {
+        min = max = parseInt(minMax[0])
+    } else {
+        min = defaultStart;
+        max = defaultEnd;
+    }
+
     return {
         min, max
     };

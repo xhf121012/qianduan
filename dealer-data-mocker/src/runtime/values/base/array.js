@@ -3,7 +3,7 @@ let { render, renderArrayItem } = require("../../executor.js");
 let { isArray, isObject } = require("../../../util/util.js");
 
 
-module.exports = function (parameter = {}) {
+module.exports = function (parameter = {}, ctx) {
     let sizeRange = parseRange(parameter.size || "2-5");
     this.minSize = sizeRange.min;
     this.maxSize = sizeRange.max;
@@ -14,6 +14,7 @@ module.exports = function (parameter = {}) {
         return renderValue(this.actualValue, ctx, listLength);
     }
 }
+
 function renderValue(actualValue, ctx, count) {
     if (isArray(actualValue)) {
         return repeat(count).map(i => render(actualValue, { ...ctx }));

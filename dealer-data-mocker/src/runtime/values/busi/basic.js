@@ -2,7 +2,7 @@ let { YES_FN } = require("../../../util/const.js");
 let { extend } = require("../../../util/util.js");
 let { randomItem } = require("../../../util/valueUtil.js");
 
-module.exports = function (parameter, conditionFn) {
+module.exports = function (parameter, ctx, conditionFn) {
     this.parameter = parameter;
     this.conditionFn = conditionFn || YES_FN;
     this.__multi = null;

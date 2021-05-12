@@ -1,6 +1,6 @@
 let { parseRange, rangeRandom } = require("../../../util/valueUtil.js");
 
-function integer(parameter = {}) {
+function integer(parameter = {}, ctx) {
     parameter.default = parameter.default || "0-999";
     let range = parseRange(parameter.default);
     this.min = range.min;

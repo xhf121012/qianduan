@@ -37,7 +37,7 @@ function renderConstant(prop, value) {
 
 function renderMocker(prop, value, ctx) {
     let mocker = prop.value.actual;
-    let mockerInstance = new mocker.mocker(mocker.parameter, mocker.conditionFn);
+    let mockerInstance = new mocker.mocker(mocker.parameter, ctx, mocker.conditionFn);
     let result = mockerInstance.invoke(ctx) || Object.create(null);
     if (prop.name) {
         value[prop.name] = result;
