@@ -59,6 +59,9 @@ function replaceProperty(target, source) {
                     let sourceItem = sourceValue[i];
                     replaceProperty(targetItem, sourceItem);
                 }
+                if (targetValue.length > length) {
+                    target[key] = targetValue.slice(0, length);
+                }
             } else {
                 target[key] = sourceValue;
             }

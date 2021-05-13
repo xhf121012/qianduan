@@ -7,18 +7,15 @@ const PROCESSING = {
 
 function compileToAst(template) {
     template = template.trim();
-    if (!template
-        || template.charAt(0) !== "{"
-        || template.charAt(template.length - 1) !== "}") {
-        throw new Error("input must start with '{' and end with '}'");
+    if (!template) {
+        throw new Error("empty template!!");
     }
-    let objContent = trimAll(template, "{", "}").trim();
-    if (!objContent) {
-        return [];
-    }
+    let single = template.charAt(0) !== "{" || template.charAt(template.length - 1) !== "}"
+    let objContent = single ? template : trimAll(template, "{", "}").trim();
     let props = parseObj(objContent);
     props = normalizeParameter(props);
-    return normalizeCondition(props);
+    props = normalizeCondition(props);
+    return single ? props[0] : props;
 }
 
 function parseObj(template) {

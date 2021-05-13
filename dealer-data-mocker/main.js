@@ -1,9 +1,7 @@
 const compileToAst = require("./src/compile/compiler.js");
 const { resolveValues, sortProperties, analyseDependency } = require("./src/runtime/resolver.js");
-const { render } = require("./src/runtime/executor.js");
-
-
-const { replaceProperty } = require("./src/util/util.js");
+const { render, renderSingle } = require("./src/runtime/executor.js");
+const { isArray } = require("./src/util/util.js");
 
 // let jsoin = `{
 //     @series[seriesId > 5000], 
@@ -38,21 +36,26 @@ const { replaceProperty } = require("./src/util/util.js");
     }, size = 1-2),
     arr2: @array(@int),
     list: @array(@dealer[cityId === $query.cityId], size = 5-10),
-    cid: $series.seriesId
+    cid: $series.seriesId,
+    itemCount: @int(5-10),
+    cityList: @array(@dealer[cityId === $query.cityId], size=10)
 */
 
 let jsoin = `{
     itemCount: @int(5-10),
-    cityList: @array(@dealer[cityId === $query.cityId], size=10)
-}`
-// let query = Object.create(null);
-// query.cityId = 130100;
-// let propList = compileToAst(jsoin);
-// resolveValues(propList);
-// analyseDependency(propList);
-// propList = sortProperties(propList);
-// let value = render(propList, null, { query });
-// console.log(JSON.stringify(value, null, 4));
+    cityList: @array(@dealer[cityId == $query.cityId], size=2)}`;
+let query = Object.create(null);
+query.cityId = "130100";
+let propList = compileToAst(jsoin);
+let isSingle = !isArray(propList);
+propList = isSingle ? [propList] : propList;
+resolveValues(propList);
+analyseDependency(propList);
+propList = sortProperties(propList);
+
+let value = isSingle ? renderSingle(propList[0], { query }) : render(propList, null, { query });
+
+console.log(JSON.stringify(value, null, 4));
 
 
 
@@ -65,44 +68,3 @@ let jsoin = `{
 5、参数支持引用（包括依赖解析）
 *
 */
-
-
-let target = {
-    name: "name",
-    complex: {
-        dealerName: "经销商1",
-        dealerId: 110100
-    },
-    list: [{
-        p1: "1",
-        p2: 99
-    }, {
-        p1: "1",
-        p2: 99
-    }],
-    list2: [[{
-        n1: 1
-    }]]
-}
-
-let source = {
-    name: "name1",
-    complex: {
-        dealerName: "dealer2"
-    },
-    list: [{
-        p1: "2",
-        p10: 100
-    },
-    {
-        p1: "2",
-        p10: 100
-    }, {
-        p1: "2",
-        p10: 100
-    }],
-    list2: [[{ n1: 2 }]]
-}
-replaceProperty(target, source)
-
-console.log(JSON.stringify(target, null, 4));
