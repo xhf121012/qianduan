@@ -28,7 +28,8 @@ const { isArray } = require("./src/util/util.js");
 */
 
 let template = `{
-    username: @dealer[cityId === 110100 + 100000, cityId < parseInt("710100")]
+    cityId: @random([110100, 340100])
+    dealerList: @array(@dealer[cityId == 110100])
 }`;
 
 let query = Object.create(null);
@@ -40,6 +41,8 @@ resolveValues(propList);
 analyseDependency(propList);
 propList = sortProperties(propList);
 let options =  { query };
+let starttime = new Date().getTime();
 let value = isSingle ? renderSingle(propList[0], options) : render(propList, null, options);
-
-console.log(JSON.stringify(value, null, 4));
+let endTime = new Date().getTime();
+console.log(endTime - starttime)
+//console.log(JSON.stringify(value, null, 4));

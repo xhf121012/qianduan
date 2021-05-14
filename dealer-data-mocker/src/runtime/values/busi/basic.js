@@ -8,7 +8,7 @@ module.exports = function (parameter, ctx, conditionFn) {
     this.__multi = null;
 
     this.invoke = function (ctx) {
-        let filteredList = this.dataList.filter(item => {
+        let filteredList = this.conditionFn === YES_FN ? this.dataList : this.dataList.filter(item => {
             let newItem = { ...item };
             extend(ctx, newItem);
             return this.conditionFn.call(null, newItem);

@@ -1,5 +1,5 @@
 let basic = require("./basic.js");
-let seriesList = require("../../../sample/seriesdata.json");
+let seriesList = require("../../../sample-data/series.json");
 
 function series(parameter, ctx, conditionFn) {
     basic.call(this, parameter, ctx, conditionFn);
