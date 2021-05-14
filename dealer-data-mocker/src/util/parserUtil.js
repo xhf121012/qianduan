@@ -24,7 +24,7 @@ module.exports.matchBrace = function (template, start, end) {
         let currentChar = template.substr(0, 1);
         if (currentChar === start) {
             braceCount += 1;
-            if (startEqualEnd &&  braceCount % 2 === 0) {
+            if (startEqualEnd && braceCount % 2 === 0) {
                 content += currentChar;
                 return content;
             }
@@ -42,9 +42,10 @@ module.exports.matchBrace = function (template, start, end) {
     return content;
 };
 
-module.exports.pushProperty = function (list, prop, content) {
-    prop.value = prop.value || content;
+module.exports.pushProperty = function (list, prop, contentList) {
+    prop.value = prop.value || contentList.join("");
     prop.value && list.push(prop);
+    contentList.splice(0);
 };
 
 module.exports.matchValue = matchValue;

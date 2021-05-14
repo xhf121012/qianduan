@@ -6,7 +6,8 @@ module.exports.isMocker = function (name) {
 }
 
 module.exports.isString = function (name) {
-    return STRING_REGEX_D.test(name) || STRING_REGEX_S.test(name);
+    return (STRING_REGEX_D.test(name) && name.match(/"/g).length === 2)
+        || (STRING_REGEX_S.test(name) && name.match(/'/g).length === 2);
 }
 
 module.exports.isNumber = function (name) {

@@ -23,11 +23,13 @@ function parseObj(template) {
     let remain = template;
     let prop = Object.create(null);
     let propList = [];
+    let valueList = [];
 
     while (remain) {
         let currentChar = remain.substr(0, 1);
         if (currentChar === ",") {
-            pushProperty(propList, prop, content);
+            valueList.push(content);
+            pushProperty(propList, prop, valueList);
             prop = Object.create(null);
             remain = moveNext(remain);
             content = "";
@@ -39,7 +41,8 @@ function parseObj(template) {
 
         } else if (currentChar === '"' || currentChar === "'") {
             let result = matchBrace(remain, currentChar, currentChar);
-            prop.value = content + result;
+            content && valueList.push(content);
+            valueList.push(result);
             remain = trimStart(remain, result);
             content = "";
 
@@ -47,14 +50,14 @@ function parseObj(template) {
             let braceResult = matchBrace(remain, "[", "]");
             remain = trimStart(remain, braceResult);
             prop.condition = braceResult;
-            prop.value = content;
+            valueList.push(content);
             content = "";
 
         } else if (currentChar === "(") {
             let braceResult = matchBrace(remain, "(", ")");
             remain = trimStart(remain, braceResult);
             prop.parameter = braceResult;
-            prop.value = prop.value || content;
+            valueList.push(content);
             content = "";
 
         } else if (currentChar === "{") {
@@ -69,7 +72,8 @@ function parseObj(template) {
         }
     }
     //如果是最后一个
-    pushProperty(propList, prop, content);
+    valueList.push(content);
+    pushProperty(propList, prop, valueList);
     return propList;
 }
 
