@@ -28,7 +28,7 @@ const { isArray } = require("./src/util/util.js");
 */
 
 let template = `{
-    uanme: "2352345".length
+    username: @dealer[cityId === 110100 + 100000, cityId < parseInt("710100")]
 }`;
 
 let query = Object.create(null);
@@ -43,15 +43,3 @@ let options =  { query };
 let value = isSingle ? renderSingle(propList[0], options) : render(propList, null, options);
 
 console.log(JSON.stringify(value, null, 4));
-
-
-
-//TODO
-/*
-1、值类型为引用不支持（包括依赖解析）
-2、引用依赖中，字符串依赖需要处理
-3、基础mock类型丰富
-4、编译逻辑要优化（遇到逗号为新属性开始）
-5、参数支持引用（包括依赖解析）
-*
-*/

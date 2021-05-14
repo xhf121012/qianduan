@@ -1,9 +1,5 @@
 let { moveNext, matchValue, matchValueAndMove, matchBrace, pushProperty } = require("../util/parserUtil.js");
 let { extend, trimAll, trimStart } = require("../util/util.js");
-const PROCESSING = {
-    KEY: 1,
-    VALUE: 2
-};
 
 function compileToAst(template) {
     template = template.trim();
@@ -77,24 +73,66 @@ function parseObj(template) {
     return propList;
 }
 
+function parseTemplate(param) {
+    let paramList = [];
+    let tempList = [];
+    let content = "";
+    while (param) {
+        let currentChar = param.substr(0, 1);
+        if (currentChar === ",") {
+            tempList.push(content)
+            let parameter = tempList.join("");
+            parameter && paramList.push(parameter);
+            tempList.splice(0);
+            param = moveNext(param);
+            content = "";
+
+        } else if (currentChar === '"' || currentChar === "'") {
+            let result = matchBrace(param, currentChar, currentChar);
+            tempList.push(content);
+            tempList.push(result);
+            param = trimStart(param, result);
+            content = "";
+
+        } else if (currentChar === "(" || currentChar === "[") {
+            let endChar = currentChar === "(" ? ")" : "]";
+            let result = matchBrace(param, currentChar, endChar);
+            tempList.push(content);
+            tempList.push(result);
+            param = trimStart(param, result);
+            content = "";
+
+        } else {
+            content += currentChar;
+            param = moveNext(param, true);
+        }
+    }
+
+    tempList.push(content)
+    let parameter = tempList.join("");
+    parameter && paramList.push(parameter);
+    return paramList;
+}
+
 function normalizeParameter(propList) {
     let processString = function (param, isFirstDefault) {
-        let paramListStr = param.split(/[\s]*,[\s]*/);
+        let paramList = parseTemplate(param);
         let parameterObject = Object.create(null);
-        if (!paramListStr.length) {
-            return paramObj;
+        if (!paramList.length) {
+            return parameterObject;
         }
 
         if (isFirstDefault) {
-            parameterObject.default = paramListStr[0];
-            paramListStr = paramListStr.slice(1);
+            parameterObject.default = paramList[0];
+            paramList = paramList.slice(1);
         }
 
-        paramListStr.filter(kv => !!kv).forEach(function (kv) {
+        paramList.forEach(function (kv) {
             let kvSet = kv.split(/[\s]*\=[\s]*/);
             if (kvSet.length === 0) {
                 return;
             }
+
             if (kvSet.length !== 2) {
                 throw new Error("parameter parse error：" + kv);
             }
@@ -140,40 +178,10 @@ function normalizeParameter(propList) {
 }
 
 function normalizeCondition(propList) {
-    let parseCondition = function (str) {
-        let condtionList = [];
-        let content = "";
-        while (str) {
-            let currentChar = str.substr(0, 1);
-            if (currentChar === ",") {
-                content && condtionList.push(content.trim());
-                content = "";
-                str = moveNext(str);
-            } else if (currentChar === '"') {
-                let result = matchValueAndMove(str, /("[\s\S]*?")/);
-                condtionList.push(content + result.value);
-                str = result.remain;
-                content = "";
-
-            } else if (currentChar === "'") {
-                let result = matchValueAndMove(str, /('[\s\S]*?')/);
-                condtionList.push(content + result.value);
-                str = result.remain;
-                content = "";
-
-            } else {
-                content += currentChar;
-                str = moveNext(str, true);
-            }
-        }
-        content && condtionList.push(content);
-        return condtionList;
-    }
-
     propList.forEach(function (prop) {
         if (prop.condition) {
-            let conditionString = matchValue(prop.condition, /\[[\s]*([\S\s]+)[\s]*\]/);
-            prop.conditions = parseCondition(conditionString);
+            let conditionString = trimAll(prop.condition, "[", "]");
+            prop.conditions = parseTemplate(conditionString);
             delete prop.condition;
         }
     });
