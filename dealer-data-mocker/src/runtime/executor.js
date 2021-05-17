@@ -13,12 +13,18 @@ function render(propList, rootCtx, opts = {}) {
     let value = Object.create(null);
     let context = rootCtx ? rootCtx : createCtx(opts, value);
 
-    propList.forEach(prop => {
+    propList.filter(prop => prop.value.type !== valueTypes.EXPRESSION_SELF).forEach(prop => {
         let result = renderProperty(prop, context);
         if (prop.name) {
             value[prop.name] = result;
         } else {
             extend(result, value);
+        }
+    });
+    propList.filter(prop => prop.value.type === valueTypes.EXPRESSION_SELF).forEach(prop => {
+        let propertyValue = prop.value.actual.call(null, { $: value });
+        if (prop.name) {
+            value[prop.name] = propertyValue;
         }
     });
     return value;

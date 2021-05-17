@@ -27,6 +27,10 @@ function resolveValue(prop) {
         val.type = valueTypes.MOCKER;
         val.actual = findMocker(prop);
 
+    } else if (prop.value.indexOf("$.") === 0) {
+        val.type = valueTypes.EXPRESSION_SELF;
+        val.actual = new Function(`with(arguments[0]){ return ${prop.value}; }`);
+        val.expression = prop.value;
     } else {
         val.type = valueTypes.EXPRESSION;
         val.actual = new Function(`with(arguments[0]){ return ${prop.value}; }`);
@@ -105,7 +109,6 @@ function resolveDefaultParameterValue(parameters) { //解析参数，目前只�
 
 function findDependency(condition) {
     let dependencySet = [];
-
     while (condition) {
         let currentChar = condition.substr(0, 1);
         if (currentChar === '"' || currentChar === "'") { //去除阔含的影响
