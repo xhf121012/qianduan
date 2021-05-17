@@ -1,5 +1,5 @@
 let basic = require("./basic.js");
-let cityList = require("../../../sample-data/citys.json");
+let cityList = require("../../../sample/citys.json");
 
 function city(parameter, ctx, conditionFn) {
     basic.call(this, parameter, ctx, conditionFn);
