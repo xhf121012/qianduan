@@ -42,31 +42,38 @@ module.exports.trimAll = function (input, start, end) {
 }
 
 function replaceProperty(target, source) {
-    if (!(isObject(target) && isObject(source))) {
-        return target
+    let replaceArray = function (targetValue, sourceValue) {
+        let length = Math.min(targetValue.length, sourceValue.length);
+        for (let i = 0; i < length; i++) {
+            let targetItem = targetValue[i];
+            let sourceItem = sourceValue[i];
+            replaceProperty(targetItem, sourceItem);
+        }
+        if (targetValue.length > length) {
+            target.splice(length)
+        }
     }
 
-    for (const key in target) { //遍历target的属性，有的话，覆盖
-        if (Object.hasOwnProperty.call(source, key)) {
-            let targetValue = target[key];
-            let sourceValue = source[key];
-            if (isObject(targetValue) && isObject(sourceValue)) {
-                replaceProperty(targetValue, sourceValue);
-            } else if (isArray(targetValue) && isArray(sourceValue)) {
-                let length = Math.min(targetValue.length, sourceValue.length);
-                for (let i = 0; i < length; i++) {
-                    let targetItem = targetValue[i];
-                    let sourceItem = sourceValue[i];
-                    replaceProperty(targetItem, sourceItem);
+    if (isObject(target) && isObject(source)) { //遍历target的属性，有的话，覆盖
+        for (const key in target) {
+            if (Object.hasOwnProperty.call(source, key)) {
+                let targetValue = target[key];
+                let sourceValue = source[key];
+                if (isObject(targetValue) && isObject(sourceValue)) {
+                    replaceProperty(targetValue, sourceValue);
+                } else if (isArray(targetValue) && isArray(sourceValue)) {
+                    replaceArray(targetValue, sourceValue);
+                } else {
+                    target[key] = sourceValue;
                 }
-                if (targetValue.length > length) {
-                    target[key] = targetValue.slice(0, length);
-                }
-            } else {
-                target[key] = sourceValue;
             }
         }
     }
+
+    if (isArray(target) && isArray(source)) {
+        replaceArray(target, source);
+    }
+
     return target;
 }
 

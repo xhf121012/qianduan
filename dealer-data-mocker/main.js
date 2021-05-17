@@ -1,7 +1,7 @@
 const compileToAst = require("./src/compile/compiler.js");
 const { resolveValues, sortProperties, analyseDependency } = require("./src/runtime/resolver.js");
 const { render, renderSingle } = require("./src/runtime/executor.js");
-const { isArray } = require("./src/util/util.js");
+const { isArray, replaceProperty } = require("./src/util/util.js");
 
 /*
     consumerId1: "3333" + $dealer.dealerName,
@@ -26,14 +26,30 @@ const { isArray } = require("./src/util/util.js");
     itemCount: @int(5-10),
     cityList: @array(@dealer[cityId === $query.cityId], size=2)
 */
-
-let template = `{
-    userId: @int(124000),
-    userList: @array({
-        @city,
-        ccccc: $.cityId
-    })
-}`;
+let s = [
+        {
+          "activityId": 5464225,
+          "seriesId": 4901,
+          "dealerInfoId": 74669490,
+          "dealerSimpleName": "pariatur magna",
+          "financePreferential": "mollit sed",
+          "seriesPreferential": "sed consectetur"
+        },
+        {
+          "activityId": -71649284,
+          "seriesId": 4346,
+          "dealerInfoId": -95477219,
+          "dealerSimpleName": "Excepteur dolor cupidatat elit nostrud",
+          "financePreferential": "velit",
+          "seriesPreferential": "velit sunt pariatur nulla"
+        }
+      ]
+let template = ` @array({
+                @dealer,
+                @series,
+                financePreferential: @random([1,2,3,4,5]),
+                seriesPreferential: $.seriesName + '的优惠信息'
+        }, size=3)`;
 
 let query = Object.create(null);
 query.cityId = 130100;
@@ -47,4 +63,5 @@ let options =  { query };
 let starttime = new Date().getTime();
 let value = isSingle ? renderSingle(propList[0], options) : render(propList, null, options);
 let endTime = new Date().getTime();
-console.log(JSON.stringify(value, null, 4));
+replaceProperty(s, value);
+console.log(JSON.stringify(s, null, 4));
