@@ -50,7 +50,7 @@ function replaceProperty(target, source) {
             replaceProperty(targetItem, sourceItem);
         }
         if (targetValue.length > length) {
-            target.splice(length)
+            targetValue.splice(length)
         }
     }
 

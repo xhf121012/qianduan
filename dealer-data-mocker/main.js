@@ -1,7 +1,7 @@
 const compileToAst = require("./src/compile/compiler.js");
 const { resolveValues, sortProperties, analyseDependency } = require("./src/runtime/resolver.js");
 const { render, renderSingle } = require("./src/runtime/executor.js");
-const { isArray, replaceProperty } = require("./src/util/util.js");
+const { isArray } = require("./src/util/util.js");
 
 /*
     consumerId1: "3333" + $dealer.dealerName,
@@ -26,30 +26,17 @@ const { isArray, replaceProperty } = require("./src/util/util.js");
     itemCount: @int(5-10),
     cityList: @array(@dealer[cityId === $query.cityId], size=2)
 */
-let s = [
-        {
-          "activityId": 5464225,
-          "seriesId": 4901,
-          "dealerInfoId": 74669490,
-          "dealerSimpleName": "pariatur magna",
-          "financePreferential": "mollit sed",
-          "seriesPreferential": "sed consectetur"
-        },
-        {
-          "activityId": -71649284,
-          "seriesId": 4346,
-          "dealerInfoId": -95477219,
-          "dealerSimpleName": "Excepteur dolor cupidatat elit nostrud",
-          "financePreferential": "velit",
-          "seriesPreferential": "velit sunt pariatur nulla"
-        }
-      ]
-let template = ` @array({
-                @dealer,
-                @series,
-                financePreferential: @random([1,2,3,4,5]),
-                seriesPreferential: $.seriesName + '的优惠信息'
-        }, size=3)`;
+
+let template = `{
+  cityId: $query.cityId, 
+  @city[cityId == $this.cityId, cityLevel === 2],
+  complex: {
+      rootCityName: $city.cityName, 
+      p1: 1,
+      p2: $.p1, 
+      p3: $this.cityId 
+  }
+}`;
 
 let query = Object.create(null);
 query.cityId = 130100;
@@ -63,5 +50,4 @@ let options =  { query };
 let starttime = new Date().getTime();
 let value = isSingle ? renderSingle(propList[0], options) : render(propList, null, options);
 let endTime = new Date().getTime();
-replaceProperty(s, value);
-console.log(JSON.stringify(s, null, 4));
+console.log(JSON.stringify(value, null, 4));
